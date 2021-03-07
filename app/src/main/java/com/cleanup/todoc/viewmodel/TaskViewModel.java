@@ -43,6 +43,7 @@ public class TaskViewModel extends ViewModel {
 	// ------------
 	// FOR PROJECT
 	// ------------
+
 	@Nullable
 	public LiveData<List<Project>> getProjects() {
 		return this.mProjects;
@@ -52,8 +53,8 @@ public class TaskViewModel extends ViewModel {
 	// FOR TASK
 	// ------------
 
-	public LiveData<List<Task>> getTasks(long projectId) {
-		return mTaskDataSource.getTasks(projectId);
+	public LiveData<List<Task>> getTasks() {
+		return mTaskDataSource.getTasks();
 	}
 
 	public void createTask(Task task) {
@@ -62,15 +63,10 @@ public class TaskViewModel extends ViewModel {
 		});
 	}
 
-	public void deleteTask(long taskId) {
+	public void deleteTask(Task task) {
 		mExecutor.execute(() -> {
-			mTaskDataSource.deleteTask(taskId);
+			mTaskDataSource.deleteTask(task);
 		});
 	}
 
-	public void updateTask(Task task) {
-		mExecutor.execute(() -> {
-			mTaskDataSource.updateTask(task);
-		});
-	}
 }

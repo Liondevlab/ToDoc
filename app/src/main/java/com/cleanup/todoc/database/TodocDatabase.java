@@ -14,24 +14,28 @@ import com.cleanup.todoc.database.dao.TaskDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(entities = {Task.class, Project.class}, version = 1, exportSchema = false)
-public abstract class ToDocDatabase extends RoomDatabase {
+public abstract class TodocDatabase extends RoomDatabase {
+
+    static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(4);
 
     // --- SINGLETON ---
-    private static volatile ToDocDatabase INSTANCE;
+    private static volatile TodocDatabase INSTANCE;
 
     // --- DAO ---
     public abstract TaskDao taskDao();
-
     public abstract ProjectDao projectDao();
 
     // --- INSTANCE ---
-    public static ToDocDatabase getInstance(Context context) {
+    public static TodocDatabase getInstance(Context context) {
         if (INSTANCE == null) {
-            synchronized (ToDocDatabase.class) {
+            synchronized (TodocDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            ToDocDatabase.class, "todoc_database.db")
+                            TodocDatabase.class, "TodocDatabase")
                             .addCallback(prepopulateDatabase())
                             .build();
                 }
@@ -45,21 +49,14 @@ public abstract class ToDocDatabase extends RoomDatabase {
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
+                Project[] projects = Project.getAllProjects();
 
-                ContentValues contentValues = new ContentValues();
-                contentValues.put("id", 1L);
-                contentValues.put("name", "Projet Tartampion");
-                contentValues.put("color", 0xFFEADAD1);
-
-                contentValues.put("id", 2L);
-                contentValues.put("name", "Projet Lucidia");
-                contentValues.put("color", 0xFFB4CDBA);
-
-                contentValues.put("id", 3L);
-                contentValues.put("name", "Projet Circus");
-                contentValues.put("color", 0xFFA3CED2);
-
-                db.insert("Project", OnConflictStrategy.IGNORE, contentValues);
+                for (Project project : projects) {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("name", project.getName());
+                    contentValues.put("color", project.getColor());
+                    db.insert("projects", OnConflictStrategy.IGNORE, contentValues);
+                }
             }
         };
     }

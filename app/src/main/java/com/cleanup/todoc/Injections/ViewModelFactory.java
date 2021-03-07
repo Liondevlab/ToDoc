@@ -2,6 +2,7 @@ package com.cleanup.todoc.Injections;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.support.annotation.NonNull;
 
 import com.cleanup.todoc.repositories.ProjectDataRepository;
 import com.cleanup.todoc.repositories.TaskDataRepository;
@@ -25,6 +26,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 		this.mExecutor = executor;
 	}
 
+	@NonNull
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ViewModel> T create(Class<T> modelClass) {
 		if (modelClass.isAssignableFrom(TaskViewModel.class)) {

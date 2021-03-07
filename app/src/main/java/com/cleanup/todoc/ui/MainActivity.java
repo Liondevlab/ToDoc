@@ -1,5 +1,8 @@
 package com.cleanup.todoc.ui;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,14 +20,18 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.cleanup.todoc.Injections.Injection;
+import com.cleanup.todoc.Injections.ViewModelFactory;
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.viewmodel.TaskViewModel;
 import com.facebook.stetho.Stetho;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -34,10 +41,15 @@ import java.util.Date;
  */
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
+    // For Data
+    private TaskViewModel mTaskViewModel;
+    private TasksAdapter mTasksAdapter;
+    ViewModelFactory mViewModelFactory;
+
     /**
      * List of all projects available in the application
      */
-    private final Project[] allProjects = Project.getAllProjects();
+    private List<Project> allProjects;
 
     /**
      * List of all current tasks of the application
@@ -93,8 +105,17 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Stetho.initializeWithDefaults(this); // Stetho integration to inspect database
+        // Stetho integration to inspect database
+        Stetho.initializeWithDefaults(this);
+
+        // Get the same sorting after screen rotation
+        if (savedInstanceState != null) {
+            sortMethod = SortMethod.values()[savedInstanceState.getInt("sortMethod", 4)];
+        }
+
         setContentView(R.layout.activity_main);
+
+        this.configureViewModel();
 
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
@@ -103,6 +124,44 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         listTasks.setAdapter(adapter);
 
         findViewById(R.id.fab_add_task).setOnClickListener(view -> showAddTaskDialog());
+
+        // Getting Projects and Tasks
+        getProjects();
+        getTasks();
+    }
+
+    // ---------------
+    // DATA
+    // ---------------
+
+    // Configuring ViewModel
+    private void configureViewModel() {
+        mViewModelFactory = Injection.provideViewModelFactory(this);
+        this.mTaskViewModel = ViewModelProviders.of(this, mViewModelFactory).get(TaskViewModel.class);
+        this.mTaskViewModel.init();
+    }
+
+    // Get all Projects
+    private void getProjects() {
+        assert mTaskViewModel.getProjects() != null;
+        mTaskViewModel.getProjects().observe(this, this::updateProjects);
+    }
+
+    // Update Projects
+    private void updateProjects(List<Project> projects) {
+        allProjects = projects;
+    }
+
+    // Get all tasks
+    private void getTasks(){
+        mTaskViewModel.getTasks().observe(this, this::updateTasks);
+    }
+
+    // Delete a Task
+    @Override
+    public void onDeleteTask(Task task){
+        this.mTaskViewModel.deleteTask(task);
+        adapter.updateTasks(tasks);
     }
 
     @Override
@@ -125,15 +184,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             sortMethod = SortMethod.RECENT_FIRST;
         }
 
-        updateTasks();
+        getTasks();
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onDeleteTask(Task task) {
-        tasks.remove(task);
-        updateTasks();
     }
 
     /**
@@ -159,12 +212,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
             }
             // If both project and name of the task have been set
             else if (taskProject != null) {
-                // TODO: Replace this by id of persisted task
-                long id = (long) (Math.random() * 50000);
-
 
                 Task task = new Task(
-                        id,
                         taskProject.getId(),
                         taskName,
                         new Date().getTime()
@@ -205,14 +254,15 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * @param task the task to be added to the list
      */
     private void addTask(@NonNull Task task) {
-        tasks.add(task);
-        updateTasks();
+        mTaskViewModel.createTask(task);
+        adapter.updateTasks(tasks);
     }
+
 
     /**
      * Updates the list of tasks in the UI
      */
-    private void updateTasks() {
+    private void updateTasks(List<Task> tasks) {
         if (tasks.size() == 0) {
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
