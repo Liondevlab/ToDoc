@@ -1,16 +1,9 @@
 package com.cleanup.todoc.ui;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.Injections.Injection;
 import com.cleanup.todoc.Injections.ViewModelFactory;
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     // Configuring ViewModel
     private void configureViewModel() {
         mViewModelFactory = Injection.provideViewModelFactory(this);
-        this.mTaskViewModel = ViewModelProviders.of(this, mViewModelFactory).get(TaskViewModel.class);
+        this.mTaskViewModel = new ViewModelProvider(this, mViewModelFactory).get(TaskViewModel.class);
         this.mTaskViewModel.init();
     }
 
