@@ -18,6 +18,7 @@ import org.hamcrest.Matchers;
 /**
  * Created by dannyroa on 5/9/15.
  */
+@SuppressWarnings("rawtypes")
 public class TestUtils {
 
     public static <VH extends RecyclerView.ViewHolder> ViewAction actionOnItemViewAtPosition(int position,
@@ -32,6 +33,7 @@ public class TestUtils {
         return new RecyclerViewMatcher(recyclerViewId);
     }
 
+    @SuppressWarnings("unchecked")
     private static final class ActionOnItemViewAtPositionViewAction<VH extends RecyclerView
             .ViewHolder>
             implements
@@ -94,6 +96,7 @@ public class TestUtils {
             this.position = position;
         }
 
+        @SuppressWarnings("unchecked")
         public Matcher getConstraints() {
             return Matchers.allOf(new Matcher[]{
                     ViewMatchers.isAssignableFrom(RecyclerView.class), ViewMatchers.isDisplayed()

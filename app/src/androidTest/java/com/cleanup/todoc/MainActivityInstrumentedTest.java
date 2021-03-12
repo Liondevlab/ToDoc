@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
+import java.util.Objects;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.replaceText;
@@ -34,7 +36,8 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
     @Rule
-    public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+    // Replace by ActivityScenarioRule???
+    public final ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
     public void addAndRemoveTask() {
@@ -51,7 +54,7 @@ public class MainActivityInstrumentedTest {
         // Check that recyclerView is displayed
         assertThat(listTasks.getVisibility(), equalTo(View.VISIBLE));
         // Check that it contains one element only
-        assertThat(listTasks.getAdapter().getItemCount(), equalTo(1));
+        assertThat(Objects.requireNonNull(listTasks.getAdapter()).getItemCount(), equalTo(1));
 
         onView(withId(R.id.img_delete)).perform(click());
 
@@ -63,7 +66,6 @@ public class MainActivityInstrumentedTest {
 
     @Test
     public void sortTasks() {
-        MainActivity activity = rule.getActivity();
 
         onView(withId(R.id.fab_add_task)).perform(click());
         onView(withId(R.id.txt_task_name)).perform(replaceText("aaa Tâche example"));

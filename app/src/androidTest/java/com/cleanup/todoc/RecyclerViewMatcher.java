@@ -10,10 +10,12 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.util.Objects;
+
 /**
  * Created by dannyroa on 5/10/15.
  *
- * @see https://github.com/dannyroa/espresso-samples/blob/master/RecyclerView/app/src/androidTest/java/com/dannyroa/espresso_samples/recyclerview/RecyclerViewMatcher.java
+ * @see "https://github.com/dannyroa/espresso-samples/blob/master/RecyclerView/app/src/androidTest/java/com/dannyroa/espresso_samples/recyclerview/RecyclerViewMatcher.java"
  */
 public class RecyclerViewMatcher {
     private final int recyclerViewId;
@@ -55,7 +57,7 @@ public class RecyclerViewMatcher {
                     RecyclerView recyclerView =
                             view.getRootView().findViewById(recyclerViewId);
                     if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
-                        childView = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+                        childView = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
                     } else {
                         return false;
                     }

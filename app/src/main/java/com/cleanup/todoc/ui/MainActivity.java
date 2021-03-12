@@ -21,8 +21,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cleanup.todoc.Injections.Injection;
-import com.cleanup.todoc.Injections.ViewModelFactory;
+import com.cleanup.todoc.injections.Injection;
+import com.cleanup.todoc.injections.ViewModelFactory;
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
@@ -40,11 +40,11 @@ import java.util.List;
  *
  * @author Gaëtan HERFRAY
  */
+@SuppressWarnings("NotNullFieldNotInitialized")
 public class MainActivity extends AppCompatActivity implements TasksAdapter.DeleteTaskListener {
 
     // For Data
     private TaskViewModel mTaskViewModel;
-    private TasksAdapter mTasksAdapter;
     ViewModelFactory mViewModelFactory;
 
     /**

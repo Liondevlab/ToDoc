@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
  * Created by LioNDeVLaB on 08/03/2021
  */
 @RunWith(AndroidJUnit4.class)
-public class TaskDaoTest {
+public class ProjectAndTaskDaoTest {
 
 	// FOR DATA
 	private TodocDatabase mDatabase;
@@ -39,7 +39,7 @@ public class TaskDaoTest {
 
 	private static final long PROJECT_ID = 1;
 	private static final Project PROJECT_DEMO = new Project(PROJECT_ID, "TEST_PROJECT", 0xFF777777);
-	private static final Task NEW_TASK_AAA = new Task(PROJECT_ID, "AAA", 1);
+	private static Task NEW_TASK_AAA = new Task(PROJECT_ID, "AAA", 1);
 	private static final Task NEW_TASK_BBB = new Task(PROJECT_ID, "BBB", 2);
 	private static final Task NEW_TASK_CCC = new Task(PROJECT_ID, "CCC", 3);
 
@@ -100,4 +100,21 @@ public class TaskDaoTest {
 		List<Task> listedTasks = LiveDataTestUtil.getValue(this.mTaskDao.getTasks());
 		assertEquals(0, listedTasks.size());
 	}
+
+	@Test
+	public void insertAndUpdateTask() throws InterruptedException {
+		// BEFORE : Addind demo project and a demo task. Next, get the Task and delete it
+		mProjectDao.insertProject(PROJECT_DEMO);
+		mTaskDao.insertTask(NEW_TASK_AAA);
+		List<Task> taskAdded = LiveDataTestUtil.getValue(mTaskDao.getTasks());
+		assertEquals("AAA", taskAdded.get(0).getName());
+		Task task = taskAdded.get(0);
+		task.setName("ZZZ");
+
+		// TEST
+		mTaskDao.updateTask(task);
+		List<Task> listedTasks = LiveDataTestUtil.getValue(this.mTaskDao.getTasks());
+		assertEquals("ZZZ", listedTasks.get(0).getName());
+	}
+
 }

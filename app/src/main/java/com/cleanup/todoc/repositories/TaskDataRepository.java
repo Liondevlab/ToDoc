@@ -39,4 +39,10 @@ public class TaskDataRepository {
 		mTaskDao.deleteTask(task);
 	}
 
+	// UPDATE (FOR TESTING)
+
+	public void updateTask(Task task) {
+		mTaskDao.updateTask(task);
+	}
+
 }
