@@ -36,6 +36,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
 
+    @SuppressWarnings("deprecation")
     @Rule
     public final ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
 
