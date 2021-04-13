@@ -23,8 +23,6 @@ import java.util.concurrent.Executors;
 @Database(entities = {Task.class, Project.class}, version = 1, exportSchema = false)
 public abstract class TodocDatabase extends RoomDatabase {
 
-    static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(4);
-
     // --- SINGLETON ---
     private static volatile TodocDatabase INSTANCE;
 
