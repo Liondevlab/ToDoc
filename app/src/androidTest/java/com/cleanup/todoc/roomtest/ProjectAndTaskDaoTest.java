@@ -39,7 +39,7 @@ public class ProjectAndTaskDaoTest {
 
 	private static final long PROJECT_ID = 1;
 	private static final Project PROJECT_DEMO = new Project(PROJECT_ID, "TEST_PROJECT", 0xFF777777);
-	private static Task NEW_TASK_AAA = new Task(PROJECT_ID, "AAA", 1);
+	private static final Task NEW_TASK_AAA = new Task(PROJECT_ID, "AAA", 1);
 	private static final Task NEW_TASK_BBB = new Task(PROJECT_ID, "BBB", 2);
 	private static final Task NEW_TASK_CCC = new Task(PROJECT_ID, "CCC", 3);
 
